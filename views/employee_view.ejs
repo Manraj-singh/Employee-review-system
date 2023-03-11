@@ -1,0 +1,26 @@
+<% if(locals.user ){%> <%- include("partials/_navbar")-%>
+
+<h5 class="card-title text-center mt-2 mb-4">Pending Reviews</h5>
+<div class="row">
+  <% for (review of pendingReviews) {%>
+  <div class="col-6 col-md-4 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-title">Review For: <%=review.recipientEmail%></h6>
+        <form method="post" action="/employee/submit-review">
+          <textarea
+            class="form-control"
+            name="review"
+            placeholder="my-review"
+          ></textarea>
+          <input name="reviewerID" value="<%=locals.user._id%>" hidden />
+          <input name="recipientID" value="<%=review.recipientId%>" hidden />
+          <button type="submit" class="btn btn-info mt-2">Submit review</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <%}%>
+</div>
+
+<% }%>

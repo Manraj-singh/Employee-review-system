@@ -1,0 +1,71 @@
+<% if(locals.user && locals.user.isAdmin) {%> <%- include("partials/_navbar")-%>
+
+<div class="card w-50 m-auto" style="border: 1px solid blue">
+  <div class="card-body">
+    <h5 class="card-title text-center">Add employee details</h5>
+
+    <form method="post" action="/employee/register">
+      <!-- Name input -->
+      <div class="form-outline mb-2">
+        <label class="form-label" for="form4Example1">Name</label>
+        <input
+          type="text"
+          name="name"
+          id="form4Example1"
+          class="form-control border border-info"
+        />
+      </div>
+
+      <!-- Email input -->
+      <div class="form-outline mb-2">
+        <label class="form-label" for="form4Example2">Email address</label>
+        <input
+          type="email"
+          name="email"
+          id="form4Example2"
+          class="form-control border border-info"
+        />
+      </div>
+      <!-- password input -->
+      <div class="form-outline mb-2">
+        <label class="form-label" for="form4Example3">Initial password</label>
+        <input
+          type="password"
+          name="password"
+          id="form4Example3"
+          class="form-control border border-info"
+        />
+      </div>
+      <!-- confirm password input -->
+      <div class="form-outline mb-2">
+        <label class="form-label" for="form4Example4">Confirm-password</label>
+        <input
+          type="password"
+          name="confirmPassword"
+          id="form4Example4"
+          class="form-control border border-info"
+        />
+      </div>
+
+      <!-- Checkbox for make admin -->
+      <div class="form-check d-flex justify-content-center mb-4">
+        <input
+          class="form-check-input me-2 border border-info"
+          type="checkbox"
+          name="isAdmin"
+          value="true"
+          id="form4Example5"
+        />
+        <label class="form-check-label" for="form4Example5">
+          make employee as Admin
+        </label>
+      </div>
+
+      <!-- Submit button -->
+      <button type="submit" class="btn btn-primary btn-block mb-4">
+        Submit
+      </button>
+    </form>
+  </div>
+</div>
+<%}%>

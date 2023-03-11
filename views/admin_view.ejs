@@ -1,0 +1,170 @@
+<head>
+  <link rel="stylesheet" type="text/css" href="/css/admin_view.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
+    rel="stylesheet"
+  />
+</head>
+<%- include("partials/_navbar")-%>
+
+<h5 class="card-title text-center mt-2 mb-4">All Employees</h5>
+<% if(locals.user && locals.user.isAdmin) {%>
+
+<table
+  class="table m-auto border-info table-striped table-hover align-middle mb-0 bg-white"
+>
+  <thead class="bg-light table-dark">
+    <tr>
+      <th>Name</th>
+      <th>Title</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (emp of employees) {%>
+    <tr>
+      <td>
+        <div class="d-flex align-items-center">
+          <img
+            src="https://mdbootstrap.com/img/new/avatars/<%=employees.indexOf(emp)+1%>.jpg"
+            alt=""
+            style="width: 45px; height: 45px"
+            class="rounded-circle"
+          />
+          <div class="ms-3">
+            <p class="fw-bold mb-1"><%= emp.name%></p>
+            <p class="text-muted mb-0"><%= emp.email%></p>
+          </div>
+        </div>
+      </td>
+      <td>
+        <p class="fw-normal mb-1">Software engineer</p>
+        <p class="text-muted mb-0">IT department</p>
+      </td>
+      <% if(emp.isAdmin){%>
+      <td>
+        <span class="badge badge-success rounded-pill d-inline"> ADMIN </span>
+      </td>
+      <%}else{%>
+      <td>
+        <form method="post" action="/admin/makeAdmin/<%=emp._id%>">
+          <button type="submit" actio class="btn btn-link p-0 btn-rounded">
+            <span class="badge badge-warning rounded-pill d-inline"
+              >Make ADMIN</span
+            >
+          </button>
+        </form>
+      </td>
+      <%}%>
+      <td>
+        <button
+          type="button"
+          class="btn btn-outline-info btn-link btn-rounded btn-sm fw-bold"
+          data-mdb-ripple-color="dark"
+        >
+          <a href="/admin/edit-employee/<%=emp._id%>"> Edit </a>
+        </button>
+
+        <form method="post" action="/admin/remove-employee/<%=emp._id%>">
+          <button
+            type="submit"
+            class="btn btn-outline-danger btn-link btn-rounded btn-sm fw-bold"
+            data-mdb-ripple-color="dark"
+          >
+            Delete
+          </button>
+        </form>
+
+        <button
+          type="button"
+          class="btn btn-outline-success btn-link btn-rounded btn-sm fw-bold"
+          data-mdb-ripple-color="dark"
+          data-mdb-toggle="modal"
+          data-mdb-target="#modal<%=emp.id%>"
+        >
+          assign review
+        </button>
+        <div
+          class="modal top fade"
+          id="modal<%=emp.id%>"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+          data-mdb-backdrop="true"
+          data-mdb-keyboard="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form method="post" action="/admin/assign-review">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">
+                    Assign Review
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-mdb-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <!-- MODAL BODY -->
+                <div class="modal-body">
+                  <p>
+                    Reviewer :
+                    <input value="<%=emp.email%>" name="reviewer" disabled />
+                    <input value="<%=emp.id%>" name="reviewerID" hidden />
+                  </p>
+
+                  <label>Reviewing For: </label>
+                  <select
+                    name="reviewingFor"
+                    class="border border-primary form-control"
+                  >
+                    <option>Select employee to review</option>
+                    <% for (empModal of employees) {%>
+                    <%if(empModal.id!==emp.id){%>
+                    <option value="<%=empModal.id%>">
+                      <%=empModal.email%>
+                    </option>
+                    <%}}%>
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-mdb-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button type="submit" class="btn btn-primary">assign</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <!-- Modal -->
+
+    <%}%>
+  </tbody>
+</table>
+
+<% }%>

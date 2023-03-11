@@ -1,0 +1,49 @@
+<%- include("partials/_navbar")-%> <% if(locals.user && locals.user.isAdmin) {%>
+
+<div class="text-center border border-primary card w-50 h-75 m-auto p-4">
+  <h5>Add my review</h5>
+  <form method="post" action="/admin/create-review">
+    <p>
+      Reviewer :
+      <input value="<%=locals.user.email%>" name="reviewer" disabled />
+      <input value="<%=locals.user._id%>" name="reviewerID" hidden />
+    </p>
+    <label>Reviewing For: </label>
+    <select name="reviewingFor" class="border border-primary form-control">
+      <option>Select employee to review</option>
+      <% for (empModal of employees) {%> <%if(empModal.id!==locals.user.id){%>
+      <option value="<%=empModal.id%>"><%=empModal.email%></option>
+      <%}}%>
+    </select>
+
+    <label class="form-label" for="textAreaExample">Your Review</label>
+    <textarea
+      class="form-control"
+      name="review"
+      id="textAreaExample"
+      rows="4"
+    ></textarea>
+    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+  </form>
+</div>
+
+<h5 class="card-title text-center mt-2 mb-4">Performance Reviews</h5>
+<div class="row">
+  <% for (rev of reviews) {%>
+  <div class="col-6 col-md-4 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Reviewer: <%=rev.reviewer.email%></h5>
+        <h6 class="card-title">Review For: <%=rev.recipient.email%></h6>
+        <p class="card-text">review: <%=rev.message%></p>
+        <form method="post" action="/admin/delete-review">
+          <input name="reviewID" value="<%=rev.id%>" hidden />
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <%}%>
+</div>
+
+<% }%>
