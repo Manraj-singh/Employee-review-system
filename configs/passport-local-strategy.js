@@ -59,7 +59,7 @@ passport.checkAuthentication = function (req, res, next) {
     return next();
   }
   //ifuser is not signed in
-  req.flash("error", "you need to be logged in to access the page");
+  req.flash("error", "you need to be logged in");
   return res.redirect("/signup");
 };
 

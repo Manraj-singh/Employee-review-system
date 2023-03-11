@@ -25,6 +25,7 @@ module.exports.employeeRegisterPrechecks = async function (req, res, next) {
   next();
 };
 
+//custom middleware to check for adminpriviliges
 module.exports.checkAdminPrivilages = async function (req, res, next) {
   if (!req.user.isAdmin) {
     req.flash("error", "you do not have admin privilages to access page");

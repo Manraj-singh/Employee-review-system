@@ -15,6 +15,7 @@ const employeeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    //to check for admin priviliges
     isAdmin: {
       type: Boolean,
       default: false,

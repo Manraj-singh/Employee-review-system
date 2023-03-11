@@ -12,10 +12,11 @@ router.get("/", passport.checkAuthentication, (req, res) => {
   }
 });
 
+//renders signin/signup
 router.get("/signup", (req, res) => {
   return res.render("sign_in");
 });
-
+//deleting session and logout
 router.get("/logout", employeeController.logout);
 router.use("/admin", require("./admin"));
 router.use("/employee", require("./employee"));

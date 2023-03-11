@@ -7,7 +7,7 @@ module.exports.adminDashboard = async function (req, res) {
   }
   try {
     // populate all employees
-    let allEmployees = await Employee.find({});
+    let allEmployees = await Employee.find({}).sort({ createdAt: -1 });
 
     let filteredEmp = allEmployees.filter(
       (user) => user.email !== req.user.email
@@ -16,10 +16,12 @@ module.exports.adminDashboard = async function (req, res) {
       employees: filteredEmp,
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    req.flash("error", "something went wrong please try again");
     return res.redirect("/");
   }
 };
+//adding employees
 module.exports.addEmployee = function (req, res) {
   if (!req.user.isAdmin) {
     req.flash("error", "you are not allowed to access this page");
@@ -28,6 +30,7 @@ module.exports.addEmployee = function (req, res) {
   return res.render("add_employee");
 };
 
+//renders edit employee page
 module.exports.editEmployee = async function (req, res) {
   if (!req.user.isAdmin) {
     req.flash("error", "you are not allowed to access this page");
@@ -42,7 +45,6 @@ module.exports.editEmployee = async function (req, res) {
       return res.redirect("back");
     }
 
-    // req.flash("success", "employee is now a admin");
     return res.render("edit_employee", {
       employee: {
         id: employee._id,
@@ -52,10 +54,12 @@ module.exports.editEmployee = async function (req, res) {
       },
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.redirect("back");
   }
 };
+
+//post request logic to update the details in employee db
 module.exports.saveEditedEmployee = async function (req, res) {
   if (!req.user.isAdmin) {
     req.flash("error", "you are not allowed to access this page");
@@ -74,20 +78,23 @@ module.exports.saveEditedEmployee = async function (req, res) {
       req.flash("error", "error ! please try again");
       return res.redirect("back");
     }
+    //update those details which are entered
     name ? (employee.name = name) : null;
     email ? (employee.email = email) : null;
     password ? (employee.password = password) : null;
     employee.isAdmin = isAdmin;
 
     await employee.save();
+
     req.flash("success", "employee details edited");
     return res.redirect("back");
   } catch (err) {
-    console.log(err);
+    req.flash("error", "something went wrong please try again");
+    console.error(err);
     return res.redirect("back");
   }
 };
-
+//making a employee a admin
 module.exports.makeAdmin = async function (req, res) {
   if (!req.user.isAdmin) {
     req.flash("error", "You are not a admin, only admin can make other admins");
@@ -106,11 +113,12 @@ module.exports.makeAdmin = async function (req, res) {
     req.flash("success", "employee is now a admin");
     return res.redirect("back");
   } catch (err) {
-    console.log(err);
+    req.flash("error", "something went wrong please try again");
+    console.error(err);
     return res.redirect("back");
   }
 };
-
+//deleting a employee
 module.exports.removeEmployee = async function (req, res) {
   if (!req.user.isAdmin) {
     req.flash("error", "you are not allowed to access this page");
@@ -135,6 +143,9 @@ module.exports.removeEmployee = async function (req, res) {
   }
 };
 
+//---------------------------------------------REVIEWS RELATED LOGIC WITH ADMIN PRIVILIGES--------------------------------
+
+//renders all the reviews for admin
 module.exports.allReviews = async function (req, res) {
   if (!req.user.isAdmin) {
     req.flash("error", "you are not allowed to access this page");
@@ -149,20 +160,20 @@ module.exports.allReviews = async function (req, res) {
     let filteredEmp = allEmployees.filter(
       (user) => user.email !== req.user.email
     );
-
+    //filtering and giving only required info
     let filteredReviews = allReviews.map((rev) => {
       return {
         id: rev._id,
         message: rev.review,
         reviewer: {
-          id: rev.reviewer._id,
-          name: rev.reviewer.name,
-          email: rev.reviewer.email,
+          id: rev.reviewer?._id,
+          name: rev.reviewer?.name,
+          email: rev.reviewer?.email,
         },
         recipient: {
-          id: rev.recipient._id,
-          name: rev.recipient.name,
-          email: rev.recipient.email,
+          id: rev.recipient?._id,
+          name: rev.recipient?.name,
+          email: rev.recipient?.email,
         },
       };
     });
@@ -171,11 +182,13 @@ module.exports.allReviews = async function (req, res) {
       reviews: filteredReviews,
     });
   } catch (err) {
-    console.log(err);
+    req.flash("error", "something went wrong please try again");
+    console.error(err);
     return res.redirect("back");
   }
 };
 
+//assigning a empoyee to participate in giving review of other employee
 module.exports.assignReview = async function (req, res) {
   const { reviewerID, reviewingFor } = req.body;
   if (!(reviewerID && reviewingFor)) {
@@ -194,11 +207,13 @@ module.exports.assignReview = async function (req, res) {
     req.flash("success", "Review assigned ");
     return res.redirect("back");
   } catch (err) {
-    console.log(err);
+    req.flash("error", "something went wrong please try again");
+    console.error(err);
     return res.redirect("back");
   }
 };
 
+//creating a review for a employee
 module.exports.createReview = async function (req, res) {
   const { reviewerID: reviewer, reviewingFor: recipient, review } = req.body;
   if (!(recipient && reviewer && review)) {
@@ -215,7 +230,7 @@ module.exports.createReview = async function (req, res) {
     req.flash("success", "Review created ");
     return res.redirect("back");
   } catch (err) {
-    console.log(err);
+    console.error(err);
     req.flash(
       "error",
       "error in creating review , please fill all fields and try again"
@@ -224,6 +239,7 @@ module.exports.createReview = async function (req, res) {
   }
 };
 
+//deleting reviews
 module.exports.deleteReview = async function (req, res) {
   const { reviewID } = req.body;
 

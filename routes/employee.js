@@ -4,12 +4,14 @@ const { employeeController } = require("../controllers");
 
 const { employeeRegisterPrechecks } = require("../middlewares");
 
+//renders employee dashboard
 router.get(
   "/dashboard",
   passport.checkAuthentication,
   employeeController.viewDashboard
 );
 
+//for registering employee , does prechecks in custom middle ware
 router.post(
   "/register",
   employeeRegisterPrechecks,
@@ -23,6 +25,7 @@ router.post(
   employeeController.login
 );
 
+//employee submiting a review which is assgned to employee
 router.post(
   "/submit-review",
   passport.checkAuthentication,
